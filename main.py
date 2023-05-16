@@ -15,7 +15,7 @@ import threading
 
 
 
-class InterfaceReg(QtWidgets.QWidget): 
+class InterfaceReg(QtWidgets.QWidget): #окно регистрации
     def __init__(self, parent=None):
         super().__init__(parent)
         self.ui = Ui_Form2()
@@ -51,7 +51,7 @@ class InterfaceReg(QtWidgets.QWidget):
         self.check_db.mysignal.connect(self.signal_handler)
         self.check_db.mysignal1.connect(self.signal_handler1)
 
-    def closes(self):
+    def closes(self): #функция закрытия окна регистрации
         self.close()
         self.ui.lineEdit_4.clear()
         self.ui.lineEdit_6.clear()
@@ -83,7 +83,7 @@ class InterfaceReg(QtWidgets.QWidget):
         QtWidgets.QMessageBox.about(self, 'Оповещение', value)
 
     @check_input
-    def reg(self):
+    def reg(self): #отправка данных для выполнения запроса к бд (регистрация)
         name = self.ui.lineEdit_4.text()
         bd = self.ui.dateEdit.text()
         sal = self.ui.lineEdit_6.text()
@@ -97,7 +97,7 @@ class InterfaceReg(QtWidgets.QWidget):
         self.check_db.thr_register(name, bd, sal, post, num, role, adr, stat, login, passw)
 
     @check_input1
-    def change(self):
+    def change(self): #отправка данных для выполнения запроса к бд (изменение данных работника)
         name = self.ui.lineEdit_4.text()
         bd = self.ui.dateEdit.text()
         sal = self.ui.lineEdit_6.text()
@@ -109,10 +109,10 @@ class InterfaceReg(QtWidgets.QWidget):
         login = self.ui.lineEdit_5.text()
         self.check_db.thr_changeworker(name, bd, sal, post, num, role, adr, stat, login)
 
-    def signal_handler1(self, value):
+    def signal_handler1(self, value): #обработчик сигналов, сигнал при изменении данных
         QtWidgets.QMessageBox.about(self, 'Оповещение', value)
 
-class InterfaceChange(QtWidgets.QWidget):
+class InterfaceChange(QtWidgets.QWidget): #запрос на изменение данных
     def __init__(self, parent=None):
 
         super().__init__(parent)
@@ -127,11 +127,11 @@ class InterfaceChange(QtWidgets.QWidget):
         self.check_db = CheckThread()
         self.check_db.mysignal.connect(self.signal_handler)
 
-    def closes(self):
+    def closes(self): #закрытие окна
         self.close()
         self.ui.textEdit.clear()
 
-    def check_input(funct):
+    def check_input(funct): #провкрка правильности ввода
         def wrapper(self):
             if len(self.ui.textEdit.toPlainText()) == 0:
                 return
@@ -139,15 +139,15 @@ class InterfaceChange(QtWidgets.QWidget):
         return wrapper
 
     @check_input
-    def change(self):
+    def change(self): #отправка данных для внесения изменений в бд
         log = self.ui.lineEdit.text()
         req = self.ui.textEdit.toPlainText()
         self.check_db.thr_change(log, req)
 
-    def signal_handler(self, value):
+    def signal_handler(self, value): #обработчик сигналов при отправке данных
         QtWidgets.QMessageBox.about(self, 'Оповещение', value)
 
-class InterfaceAdminChange(QtWidgets.QMainWindow):
+class InterfaceAdminChange(QtWidgets.QMainWindow): #окно обработки запрососв на изменение данных
     def __init__(self, parent=None):
         super().__init__(parent)
         self.ui = Ui_Form4()
@@ -164,10 +164,10 @@ class InterfaceAdminChange(QtWidgets.QMainWindow):
 
         self.ui.tableWidget.setSortingEnabled(True)
 
-    def closes(self):
+    def closes(self): #закрытие окна
         self.close()
 
-    def cell_clicked(self):
+    def cell_clicked(self): #обработка нажатий в таблице
         row = self.ui.tableWidget.currentItem().row()
         log = self.ui.tableWidget.item(row, 0).text()
         inf = self.ui.tableWidget.item(row, 1).text()
@@ -175,12 +175,12 @@ class InterfaceAdminChange(QtWidgets.QMainWindow):
         self.ach.y = inf
         self.ach.show()
 
-    def admchanges(self):
+    def admchanges(self): #вывод данных из бд
         a = 1
         self.check_db.thr_admchange(a)
         threading.Timer(15, self.admchanges).start()
 
-    def signal_handler(self, value):
+    def signal_handler(self, value): #обработка сигналов, днные для вывода
         self.ui.tableWidget.setRowCount(len(value))
         for i, row in enumerate(value):
             self.ui.tableWidget.setItem(i, 0, QtWidgets.QTableWidgetItem(row[0]))
@@ -188,7 +188,7 @@ class InterfaceAdminChange(QtWidgets.QMainWindow):
             self.ui.tableWidget.resizeColumnsToContents()
 
 
-class AdmChange(QtWidgets.QWidget):
+class AdmChange(QtWidgets.QWidget): #окно для изменения данных работников
     def __init__(self, parent=None):
         super().__init__(parent)
         self.ui = Ui_Form5()
@@ -206,7 +206,7 @@ class AdmChange(QtWidgets.QWidget):
         self.ui.pushButton_2.clicked.connect(self.closes)
         self.ui.pushButton.clicked.connect(self.changeinf2)
 
-    def check_input(funct):
+    def check_input(funct): #проверка правильности ввода
         def wrapper(self):
             for line_edit in self.base_line_edit:
                 if len(line_edit.text()) == 0:
@@ -214,21 +214,21 @@ class AdmChange(QtWidgets.QWidget):
             funct(self)
         return wrapper
 
-    def closes(self):
+    def closes(self): #закрытие окна
         self.close()
 
-    def login(self):
+    def login(self): #внесение необходимых данных в поля
         log = self.x
         inf = self.y
         self.ui.label_3.setText('Изменение данных для ' + log)
         self.ui.label_19.setText(inf)
 
-    def changeinf(self):
+    def changeinf(self): #отправка данных для внесения изменений
         log = self.x
         self.check_db.thr_changeinf(log)
 
     @check_input
-    def changeinf2(self):
+    def changeinf2(self): #данные, которые необходимо изменить
         log = self.x
         fio = self.ui.lineEdit.text()
         number = self.ui.lineEdit_2.text()
@@ -237,18 +237,18 @@ class AdmChange(QtWidgets.QWidget):
         self.check_db.thr_changeinf2(log, fio, number, add, sp)
 
 
-    def signal_handler2(self, value):
+    def signal_handler2(self, value): #сигнал при изменении данных
         QtWidgets.QMessageBox.about(self, 'Оповещение', value)
         self.close()
 
-    def signal_handler(self, value):
+    def signal_handler(self, value): #данные для изменения
         for i in value:
             self.ui.lineEdit.setText(i[0])
             self.ui.lineEdit_2.setText(i[1])
             self.ui.lineEdit_3.setText(i[2])
             self.ui.lineEdit_4.setText(i[3])
 
-class InterfaceMain(QtWidgets.QWidget):
+class InterfaceMain(QtWidgets.QWidget): #главное окно
     def __init__(self, parent=None):
         super().__init__(parent)
         self.ui = Ui_Form()
@@ -288,7 +288,7 @@ class InterfaceMain(QtWidgets.QWidget):
         self.check_db.mysignal.connect(self.signal_handler)
         self.main()
 
-    def clopen(self):
+    def clopen(self): #открыть работу с клиентом
         self.icl.show()
         self.icl.push6.show()
         self.icl.push7.show()
@@ -299,30 +299,30 @@ class InterfaceMain(QtWidgets.QWidget):
         self.icl.dbclients()
         self.icl.login = self.login
 
-    def touropen(self):
+    def touropen(self): #открыть офрмленные туры
         self.io.show()
         name = self.login
         self.io.line.setText(name)
         self.io.check.setChecked(True)
         self.io.dborder()
 
-    def tablehotel(self):
+    def tablehotel(self): #открыть таблицу отели
         self.ih.show()
         self.ih.dbhotel()
 
-    def tablecountry(self):
+    def tablecountry(self): #открыть таблицу страны
         self.ict.show()
         self.ict.dbcountry()
 
-    def tablefood(self):
+    def tablefood(self): #открыть таблицу питание
         self.ifood.show()
         self.ifood.dbfood()
 
-    def tabletype(self):
+    def tabletype(self): #открыть таблицу типы туров
         self.it.show()
         self.it.dbtype()
 
-    def tabletour(self):
+    def tabletour(self): #открыть таблицу туры
         self.itour.show()
         self.itour.push3.show()
         self.itour.push4.show()
@@ -332,19 +332,19 @@ class InterfaceMain(QtWidgets.QWidget):
         self.itour.check13.setChecked(True)
         self.itour.dbtour()
 
-    def tableorder(self):
+    def tableorder(self): #открыть таблицу заказы
         self.io.show()
         self.io.dborder()
 
-    def tabledisc(self):
+    def tabledisc(self): #открыть таблицу скидки
         self.id.show()
         self.id.dbdisc()
 
-    def tableworker(self):
+    def tableworker(self): #открыть таблицу сотрудники (только для администратора)
         self.iw.show()
         self.iw.dbworker()
 
-    def tableclients(self):
+    def tableclients(self): #открыть таблицу клиенты
         self.icl.show()
         self.icl.push6.hide()
         self.icl.push7.hide()
@@ -354,16 +354,16 @@ class InterfaceMain(QtWidgets.QWidget):
         self.icl.push3.setText("Добавить данные")
         self.icl.dbclients()
 
-    def admchange(self):
+    def admchange(self): #открыть окно заявок на изменение данных(администратор)
         self.ac.show()
         self.ac.admchanges()
 
-    def changes(self):
+    def changes(self): #открыть окно заявки на изменение данных
         self.ic.show()
         log = self.login
         self.ic.edit_login.setText(log)
 
-    def reg(self):
+    def reg(self): #открыть окно добавления работника(администраторы)
         self.ir.show()
         self.ir.label1.show()
         self.ir.label.hide()
@@ -372,14 +372,14 @@ class InterfaceMain(QtWidgets.QWidget):
         self.ir.push.show()
         self.ir.push1.hide()
 
-    def closes(self):
+    def closes(self): #закрыто программу
         self.close()
 
-    def main(self):
+    def main(self): #отправка данных для вывода информации
         log = self.login
         self.check_db.thr_main(log)
 
-    def signal_handler(self, value):
+    def signal_handler(self, value): #вывод информации
         for i in value:
             self.ui.label_2.setText(i[0])
             self.ui.label.setText(i[1])
@@ -393,7 +393,7 @@ class InterfaceMain(QtWidgets.QWidget):
         threading.Timer(15, self.main).start()
 
 
-class InterfaceAuth(QtWidgets.QWidget):
+class InterfaceAuth(QtWidgets.QWidget): #окно авторизации в системе
     def __init__(self, parent=None):
         super().__init__(parent)
         self.im = InterfaceMain()
@@ -429,14 +429,14 @@ class InterfaceAuth(QtWidgets.QWidget):
             self.close()
 
     @check_input
-    def auth(self):
+    def auth(self): #оправка данных в бд для входа в систему
         name = self.ui.lineEdit.text()
         passw = self.ui.lineEdit_2.text()
         self.check_db.thr_login(name, passw)
 
 
 
-if __name__ == "__main__":
+if __name__ == "__main__": #открытие окна
     app = QtWidgets.QApplication(sys.argv)
     mywin = InterfaceAuth()
     mywin.show()

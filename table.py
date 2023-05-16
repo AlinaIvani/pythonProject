@@ -14,7 +14,7 @@ import docx
 import threading
 
 
-class InterfaceHotel(QtWidgets.QWidget):
+class InterfaceHotel(QtWidgets.QWidget): #таблица отели
     def __init__(self, parent=None):
         super().__init__(parent)
         self.ui = Ui_Form6()
@@ -36,7 +36,7 @@ class InterfaceHotel(QtWidgets.QWidget):
         self.check_db.mysignal.connect(self.signal_handler)
         self.check_db.mysignal1.connect(self.signal_handler2)
 
-    def print(self):
+    def print(self): #вывод данных таблицы в текстовый документ
         rows = self.ui.tableWidget.rowCount()
         cols = self.ui.tableWidget.columnCount()
         data = []
@@ -69,10 +69,10 @@ class InterfaceHotel(QtWidgets.QWidget):
         doc.save('D://отели.docx')
         QtWidgets.QMessageBox.about(self, 'Оповещение', "файл сохранен на диск D")
 
-    def closes(self):
+    def closes(self): #закрыть таблицу
         self.close()
 
-    def dbhotel(self):
+    def dbhotel(self): #оправка данных для применения сортрировки
         threading.Timer(15, self.dbhotel).start()
         if self.ui.checkBox.isChecked() == True:
             inf1 = self.ui.lineEdit.text()
@@ -88,7 +88,7 @@ class InterfaceHotel(QtWidgets.QWidget):
             inf3 = "%"
         self.check_db.thr_dbhotel(inf1, inf2, inf3)
 
-    def signal_handler(self, value):
+    def signal_handler(self, value): #вывод данных в таблицу
         self.ui.tableWidget.setRowCount(len(value))
         for i, row in enumerate(value):
             item = QtWidgets.QTableWidgetItem()
@@ -102,7 +102,7 @@ class InterfaceHotel(QtWidgets.QWidget):
             self.ui.tableWidget.resizeColumnToContents(2)
             self.ui.tableWidget.resizeRowsToContents()
 
-    def delhotel(self):
+    def delhotel(self): #удаление строки из таблицы
         row = self.ui.tableWidget.currentItem().row()
         a = self.ui.tableWidget.item(row, 0).text()
         massage = QtWidgets.QMessageBox()
@@ -112,10 +112,10 @@ class InterfaceHotel(QtWidgets.QWidget):
         else:
            massage.close()
 
-    def signal_handler2(self, value):
+    def signal_handler2(self, value): #сигнал при удалении
         QtWidgets.QMessageBox.about(self, 'Оповещение', value)
 
-    def cell_clicked(self):
+    def cell_clicked(self): #обработка нажатий для удаления и изменение данных
         row = self.ui.tableWidget.currentItem().row()
         name = self.ui.tableWidget.item(row, 0).text()
         city = self.ui.tableWidget.item(row, 1).text()
@@ -133,7 +133,7 @@ class InterfaceHotel(QtWidgets.QWidget):
         self.ad.nameline2.show()
         self.ad.nameline.hide()
 
-    def openadd(self):
+    def openadd(self): #открыть окно для добавления или изменения данных
         self.ad.show()
         self.ad.push2.hide()
         self.ad.push.show()
@@ -143,7 +143,7 @@ class InterfaceHotel(QtWidgets.QWidget):
         self.ad.nameline.show()
 
 
-class AddHotel(QtWidgets.QWidget):
+class AddHotel(QtWidgets.QWidget): #окно добавления или изменения данных
     def __init__(self, parent=None):
         super().__init__(parent)
         self.ui = Ui_Form01()
@@ -169,7 +169,7 @@ class AddHotel(QtWidgets.QWidget):
         self.ui.pushButton_2.clicked.connect(self.closes)
         self.ui.pushButton_3.clicked.connect(self.changehotel)
 
-    def check_input(funct):
+    def check_input(funct): #проверка правильности ввода
         def wrapper(self):
             for line_edit in self.base_line_edit:
                 if len(line_edit.text()) == 0:
@@ -178,34 +178,34 @@ class AddHotel(QtWidgets.QWidget):
         return wrapper
 
     @check_input
-    def addhotel(self):
+    def addhotel(self): #отправка данных для добавления
         name = self.ui.lineEdit.text()
         city = self.ui.lineEdit_2.text()
         star = self.ui.comboBox.currentText()
         note = self.ui.textEdit.toPlainText()
         self.check_db.thr_addhotel(name, city, star, note)
 
-    def signal_handler(self, value):
+    def signal_handler(self, value): #сигнал при добавлении данных
         QtWidgets.QMessageBox.about(self, 'Оповещение', value)
 
-    def changehotel(self):
+    def changehotel(self): #отправка данных для изменения
         name = self.ui.lineEdit_3.text()
         city = self.ui.lineEdit_2.text()
         star = self.ui.comboBox.currentText()
         note = self.ui.textEdit.toPlainText()
         self.check_db.thr_changehotel(name, city, star, note)
 
-    def signal_handler1(self, value):
+    def signal_handler1(self, value): #сигнал при изменении данных
         QtWidgets.QMessageBox.about(self, 'Оповещение', value)
 
-    def closes(self):
+    def closes(self): #закрыть окно
         self.close()
         self.ui.textEdit.clear()
         self.ui.lineEdit.clear()
         self.ui.lineEdit_2.clear()
 
 
-class InterfaceCountry(QtWidgets.QWidget):
+class InterfaceCountry(QtWidgets.QWidget): #таблица страны
     def __init__(self, parent=None):
         super().__init__(parent)
         self.ui = Ui_Form7()
@@ -227,7 +227,7 @@ class InterfaceCountry(QtWidgets.QWidget):
         self.check_db.mysignal.connect(self.signal_handler)
         self.check_db.mysignal1.connect(self.signal_handler2)
 
-    def print(self):
+    def print(self): #добавление данных из таблицы в текстовый документ
         rows = self.ui.tableWidget.rowCount()
         cols = self.ui.tableWidget.columnCount()
         data = []
@@ -260,10 +260,10 @@ class InterfaceCountry(QtWidgets.QWidget):
         doc.save('D://страны.docx')
         QtWidgets.QMessageBox.about(self, 'Оповещение', "файл сохранен на диск D")
 
-    def closes(self):
+    def closes(self): #закрыть окно
         self.close()
 
-    def delcountry(self):
+    def delcountry(self): #удаление строки таблицы
         row = self.ui.tableWidget.currentItem().row()
         a = self.ui.tableWidget.item(row, 0).text()
         massage = QtWidgets.QMessageBox()
@@ -273,7 +273,7 @@ class InterfaceCountry(QtWidgets.QWidget):
         else:
            massage.close()
 
-    def signal_handler2(self, value):
+    def signal_handler2(self, value): #сигнал при удалении
         QtWidgets.QMessageBox.about(self, 'Оповещение', value)
 
     def addopen(self):
